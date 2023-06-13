@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
-from .forms import SignUpForm
+from .forms import SignUpForm, AddRecordForm
 from .models import Record
 from django.contrib.auth.decorators import login_required
 
@@ -77,4 +77,25 @@ def delete_record(request, pk):
     delete_it.delete()
     messages.success(request, "Customer record deleted successfully....")
     return redirect('home')
+    
+# add record
+@login_required(login_url="home")
+def add_record(request):
+    form = AddRecordForm(request.POST or None)
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            if form.is_valid():
+                add_record = form.save()
+                messages.success(request, "Customer record added successfully....")
+                return redirect('home')
+
+        return render(request, 'add_record.html', {'form':form})
+    else:
+       messages.success(request, "You must be logged in....")
+       return redirect('home')
+
+
+
+
+    
     
