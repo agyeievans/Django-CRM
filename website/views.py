@@ -3,6 +3,8 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from .forms import SignUpForm
 from .models import Record
+from django.contrib.auth.decorators import login_required
+
 
 # Create your views here.
 
@@ -68,5 +70,11 @@ def customer_record(request, pk):
         messages.success(request, "You must be logged in to view page")
         return redirect('home')
 
-
+# delete customer record
+@login_required(login_url="home")
+def delete_record(request, pk):
+    delete_it = Record.objects.get(id=pk)
+    delete_it.delete()
+    messages.success(request, "Customer record deleted successfully....")
+    return redirect('home')
     
